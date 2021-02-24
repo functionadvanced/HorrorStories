@@ -117,6 +117,7 @@
             $("#content").text(all_data[_index].content);
             $("#answer").text(all_data[_index].answer);
             pre_next_btn_display_ctrl();
+            $(window).scrollTop(0);
         }
         function pre_next_btn_display_ctrl() {
             if (curr_index == 0) {
