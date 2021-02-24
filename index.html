@@ -45,6 +45,7 @@
             height: 120px;
             padding-top: 60px;
             text-align: center;
+            z-index: -10;
         }
     </style>
 </head>
@@ -65,7 +66,7 @@
                         目录
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="menu_list">
-                        <a class="dropdown-item" onclick="load(80)" role="button" href="#">Action</a>
+                        <a class="dropdown-item" onclick="load_story(80)" role="button" href="#">Action</a>
                     </div>
                 </li>
             </ul>
@@ -108,25 +109,40 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script>
+        let curr_index = 0;
+        let all_data;
+        function load_story(_index) {
+            curr_index = _index;
+            $("#title").text((_index + 1) + ". " + all_data[_index].title);
+            $("#content").text(all_data[_index].content);
+            $("#answer").text(all_data[_index].answer);
+            pre_next_btn_display_ctrl();
+        }
+        function pre_next_btn_display_ctrl() {
+            if (curr_index == 0) {
+                $("#pre_btn").hide();
+            }
+            else {
+                $("#pre_btn").show();
+            }
+            if (curr_index == all_data.length - 1) {
+                $("#next_btn").hide();
+            }
+            else {
+                $("#next_btn").show();
+            }
+        }
         $(document).ready(function () {
-            let curr_index = 0;
-            let all_data;
             $.getJSON("horror_stories.json", data => {
                 all_data = data;
                 let temp = "";
                 for (let i = 0; i < all_data.length; ++i) {
-                    temp += `<a class="dropdown-item" role="button" href="#" onclick="load(${i})">${(i + 1) + ". " + (all_data[i].title == "" ? "无题" : all_data[i].title)}</a>`;
+                    temp += `<a class="dropdown-item" role="button" href="#" onclick="load_story(${i})">${(i + 1) + ". " + (all_data[i].title == "" ? "无题" : all_data[i].title)}</a>`;
                 }
                 $("#menu_list").html(temp);
-                load(curr_index);
+                load_story(curr_index);
             });
-            function load(_index) {
-                curr_index = _index;
-                $("#title").text((_index + 1) + ". " + all_data[_index].title);
-                $("#content").text(all_data[_index].content);
-                $("#answer").text(all_data[_index].answer);
-                pre_next_btn_display_ctrl();
-            }
+
             $('#answer_btn').on("click", function () {
                 $(this).toggleClass("active");
                 if ($(this).hasClass("active")) {
@@ -137,26 +153,13 @@
             });
             $('#pre_btn').on("click", function () {
                 curr_index--;
-                load(curr_index);
+                load_story(curr_index);
             });
             $('#next_btn').on("click", function () {
                 curr_index++;
-                load(curr_index);
+                load_story(curr_index);
             });
-            function pre_next_btn_display_ctrl() {
-                if (curr_index == 0) {
-                    $("#pre_btn").hide();
-                }
-                else {
-                    $("#pre_btn").show();
-                }
-                if (curr_index == all_data.length - 1) {
-                    $("#next_btn").hide();
-                }
-                else {
-                    $("#next_btn").show();
-                }
-            }
+
         });
     </script>
 </body>
