@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hans">
+
+<head>
+    <!-- Required meta tags -->
+    <!-- python -m http.server -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>逻辑恐怖故事</title>
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            font-family: 'Montserrat Alternates', sans-serif;
+            margin-bottom: 60px;
+        }
+
+        body::after {
+            content: "";
+            /* background-image: url("/images/pcb.png"); */
+            opacity: 0.25;
+            z-index: -1;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            position: absolute;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 120px;
+            padding-top: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">逻辑恐怖故事</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        目录
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="menu_list">
+                        <a class="dropdown-item" onclick="load(80)" role="button" href="#">Action</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h3 id="title" style="margin-top: 1rem"></h3>
+        <div id="content" style="white-space: pre-wrap;"></div>
+        <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 1rem; margin-bottom: 1rem;"
+            id="answer_btn">
+            显示答案
+        </button>
+        <button class="btn btn-light" id="pre_btn">上一篇</button>
+        <button class="btn btn-light" id="next_btn">下一篇</button>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body" id="answer">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil
+                anim
+                keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <span class="text-muted text-center">
+            <small>
+                免责声明：提供的内容在网上搜集，仅用于个人学习、研究或欣赏。内容原作者如不愿意在本网站刊登内容，请及时联系jupeizhong6@gmail.com，予以删除。
+            </small>
+        </span>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        let curr_index = 0;
+        let all_data;
+        $.getJSON("horror_stories.json", data => {
+            all_data = data;
+            let temp = "";
+            for (let i = 0; i < all_data.length; ++i) {
+                temp += `<a class="dropdown-item" role="button" href="#" onclick="load(${i})">${(i + 1) + ". " + (all_data[i].title == "" ? "无题" : all_data[i].title)}</a>`;
+            }
+            $("#menu_list").html(temp);
+            load(curr_index);
+        });
+        function load(_index) {
+            curr_index = _index;
+            $("#title").text((_index + 1) + ". " + all_data[_index].title);
+            $("#content").text(all_data[_index].content);
+            $("#answer").text(all_data[_index].answer);
+            pre_next_btn_display_ctrl();
+        }
+        $('#answer_btn').click(function () {
+            $(this).toggleClass("active");
+            if ($(this).hasClass("active")) {
+                $(this).text("显示答案");
+            } else {
+                $(this).text("隐藏答案");
+            }
+        });
+        $('#pre_btn').click(function () {
+            curr_index--;
+            load(curr_index);
+        });
+        $('#next_btn').click(function () {
+            curr_index++;
+            load(curr_index);
+        });
+        function pre_next_btn_display_ctrl() {
+            if (curr_index == 0) {
+                $("#pre_btn").hide();
+            }
+            else {
+                $("#pre_btn").show();
+            }
+            if (curr_index == all_data.length - 1) {
+                $("#next_btn").hide();
+            }
+            else {
+                $("#next_btn").show();
+            }
+        }
+    </script>
+</body>
+
+</html>
