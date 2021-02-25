@@ -118,6 +118,11 @@
             $("#answer").text(all_data[_index].answer);
             pre_next_btn_display_ctrl();
             $(window).scrollTop(0);
+            if ($("#answer_btn").hasClass("active")) {
+                $("#answer_btn").toggleClass("active");
+                $("#answer_btn").text("显示答案");
+                $("#collapseExample").collapse('hide');
+            }
         }
         function pre_next_btn_display_ctrl() {
             if (curr_index == 0) {
@@ -147,9 +152,9 @@
             $('#answer_btn').on("click", function () {
                 $(this).toggleClass("active");
                 if ($(this).hasClass("active")) {
-                    $(this).text("显示答案");
-                } else {
                     $(this).text("隐藏答案");
+                } else {
+                    $(this).text("显示答案");
                 }
             });
             $('#pre_btn').on("click", function () {
